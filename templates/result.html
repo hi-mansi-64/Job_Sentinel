@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JobSentinel Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body { background: linear-gradient(to right, #f0f4f8, #d9e2ec); }
+    .app-card { max-width: 650px; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .trust-score-wrapper { position: relative; width: 180px; height: 180px; margin: auto; }
+    .progress-circle { transform: rotate(-90deg); }
+    circle.bg { fill: none; stroke: #e5e7eb; stroke-width: 15; }
+    circle.progress { fill: none; stroke-width: 15; stroke-linecap: round; stroke-dasharray: 439.82; stroke-dashoffset: 439.82; transition: stroke-dashoffset 1s linear, stroke 0.5s ease; }
+    .trust-score { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-weight: bold; }
+    .trust-label { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-weight: 500; }
+    .keyword-high { background-color: #f87171; color: #fff; padding: 0 3px; border-radius: 3px; }
+    .keyword-medium { background-color: #facc15; color: #000; padding: 0 3px; border-radius: 3px; }
+    .badge { margin-right: 3px; margin-bottom: 3px; }
+    .job-description { word-wrap: break-word; }
+  </style>
+</head>
+
+<body>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card app-card text-center p-4 p-md-5">
+
+    <h1 class="brand mb-2">JobSentinel</h1>
+    <p class="subtitle mb-4">Job Analysis Result</p>
+
+    <!-- Circular Trust Score -->
+    <div class="trust-score-wrapper">
+      <svg class="progress-circle" width="180" height="180">
+        <circle class="bg" cx="90" cy="90" r="70"></circle>
+        <circle class="progress" id="progressCircle" cx="90" cy="90" r="70"></circle>
+      </svg>
+      <div class="trust-score" id="trustScore">0%</div>
+      <div class="trust-label" id="trustLabel">Analyzing...</div>
+    </div>
+
+    <!-- Job Description -->
+    <div class="mt-4 text-start p-3 border rounded bg-light job-description">
+      <h5>Job Description:</h5>
+      <p id="jobText"></p>
+    </div>
+
+    <!-- Breakdown Table -->
+    <table class="table table-bordered breakdown-table mt-4">
+      <thead>
+        <tr>
+          <th>Keywords Check</th>
+          <th>Company Verification</th>
+          <th>Job Type Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="keywordsStatus"></td>
+          <td id="companyStatus"></td>
+          <td id="jobTypeStatus"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Verdict -->
+    <h2>Verdict: <strong id="verdictText"></strong></h2>
+
+    <!-- Suspicious Keywords -->
+    <p>
+      Suspicious Keywords Detected:
+      <span id="suspiciousKeywords"></span>
+    </p>
+
+    <a href="/" class="btn btn-primary mt-3 w-100">Analyze Another Job</a>
+
+  </div>
+</div>
+
+<script>
+window.onload = function() {
+  // 1 Get variables from Flask
+  let score = {{ score | tojson }};
+  let riskLevel = {{ risk_level | tojson }};
+  let verdict = {{ verdict | tojson }};
+  let companyStatus = {{ company_status | tojson }};
+  let detectedHigh = {{ detected_high | tojson }};
+  let detectedMedium = {{ detected_medium | tojson }};
+  let jobTextRaw = {{ job_text | tojson }};
+
+  // 2 DOM Elements
+  let trustScore = document.getElementById("trustScore");
+  let trustLabel = document.getElementById("trustLabel");
+  let circle = document.getElementById("progressCircle");
+
+  // 3 Circular progress animation
+  let radius = 70;
+  let circumference = 2 * Math.PI * radius;
+  circle.style.strokeDasharray = circumference;
+  circle.style.strokeDashoffset = circumference;
+
+  let offset = circumference * (1 - score / 100);
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+  // 4 Color based on riskLevel
+  if (riskLevel === "High Risk") circle.style.stroke = "#dc2626";
+  else if (riskLevel === "Medium Risk") circle.style.stroke = "#facc15";
+  else circle.style.stroke = "#16a34a";
+
+  trustScore.innerText = score + "%";
+  trustLabel.innerText = riskLevel;
+
+  // ----------------------------
+  // 5️⃣ Table: Keywords Check & Job Type Risk
+  // ----------------------------
+  let keywordsStatus = detectedHigh.length > 0 ? "High Risk" :
+                       detectedMedium.length > 0 ? "Medium Risk" : "Low Risk";
+  let jobTypeStatus = keywordsStatus;
+
+  document.getElementById("keywordsStatus").innerText = keywordsStatus;
+  document.getElementById("companyStatus").innerText = companyStatus;
+  document.getElementById("jobTypeStatus").innerText = jobTypeStatus;
+
+  // 6 Verdict
+  document.getElementById("verdictText").innerText = verdict;
+
+  // 7 Highlight suspicious keywords in job description
+  let highlightedText = jobTextRaw;
+  detectedHigh.forEach(k => {
+    let re = new RegExp(`(${k})`, "gi");
+    highlightedText = highlightedText.replace(re, `<span class="keyword-high">$1</span>`);
+  });
+  detectedMedium.forEach(k => {
+    let re = new RegExp(`(${k})`, "gi");
+    highlightedText = highlightedText.replace(re, `<span class="keyword-medium">$1</span>`);
+  });
+  document.getElementById("jobText").innerHTML = highlightedText;
+
+  // 8 Suspicious keywords badges
+  let allDetected = detectedHigh.concat(detectedMedium);
+  if(allDetected.length > 0){
+    document.getElementById("suspiciousKeywords").innerHTML = 
+      allDetected.map(k => `<span class="badge ${detectedHigh.includes(k) ? 'bg-danger' : 'bg-warning text-dark'}">${k}</span>`).join(' ');
+  } else {
+    document.getElementById("suspiciousKeywords").innerText = "None";
+  }
+};
+</script>
+
+</body>
+</html>

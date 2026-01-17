@@ -1,0 +1,160 @@
+/* Global */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Gradient background (Bootstrap flex will center card) */
+.bg-gradient {
+  background: linear-gradient(135deg, #1f4037, #99f2c8);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card styling */
+.app-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  max-width: 500px;
+  width: 100%;
+  padding: 40px 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.app-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+}
+
+/* Brand */
+.brand {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d47a1;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 15px;
+  color: #1b1f38;
+  margin-bottom: 30px;
+}
+
+/* Textarea */
+.custom-textarea {
+  resize: none;
+  border-radius: 15px;
+  font-size: 14px;
+  padding: 15px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.5);
+}
+
+.custom-textarea:focus {
+  border-color: #0d47a1;
+  box-shadow: 0 0 10px rgba(13,71,161,0.5);
+  background: rgba(255,255,255,0.7);
+}
+
+/* Button */
+.custom-btn {
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 15px;
+  border: none;
+  background: linear-gradient(135deg, #0d47a1, #00bcd4);
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* Footer */
+.footer-text {
+  font-size: 12px;
+  color: #1b1f38;
+  margin-top: 25px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 576px) {
+  .app-card {
+    padding: 30px 20px;
+  }
+
+  .brand {
+    font-size: 28px;
+  }
+
+  .custom-textarea {
+    height: 120px;
+  }
+}
+
+/* Trust Score Circular */
+.trust-score-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.trust-score {
+  font-size: 48px;
+  font-weight: 700;
+  color: #0d47a1;
+  margin-top: -110px; /* position in center of circle */
+  position: absolute;
+}
+
+.trust-label {
+  font-size: 16px;
+  color: #1b1f38;
+  margin-top: 10px;
+}
+
+/* Circular Progress Bar */
+.progress-circle {
+  transform: rotate(-90deg);
+  margin-bottom: 20px;
+}
+
+.progress-circle circle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.progress-circle .bg {
+  stroke: #e5e7eb;
+}
+
+.progress-circle .progress {
+  stroke: #0d47a1; /* default color, dynamic via JS */
+  stroke-dasharray: 439.82; /* 2πr, r=70 */
+  stroke-dashoffset: 439.82;
+  transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+}
+
+/* Breakdown Table */
+.breakdown-table th, .breakdown-table td {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Optional: hover effect for table rows */
+.breakdown-table tbody tr:hover {
+  background-color: rgba(13,71,161,0.05);
+}
