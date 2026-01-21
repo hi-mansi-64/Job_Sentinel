@@ -62,53 +62,22 @@ This makes job verification **fast, reliable, and user-friendly**.
 
 ##  Detection Techniques
 
-### 1️⃣ Machine Learning Analysis
-- Job descriptions are converted into numerical features using **TF-IDF Vectorization**.
-- A trained ML model predicts the probability of the job being a scam.
-- The output is converted into a percentage score.
+### Machine Learning Approach
 
----
+Vectorization: TF-IDF
 
-### 2️⃣ Keyword Risk Analysis
+Model Used: Trained classification model (job scam detector)
 
-#### 🔴 High Risk Keywords
-registration fee
-pay registration
-no interview
-whatsapp
-bonus check
-pay to start
+Prediction Output: Probability of job being fake
 
-#### 🟡 Medium Risk Keywords
-earn
-immediate
-work from home
-no experience
+Trust Score: Converted probability (0–100%)
 
-High-risk keywords strongly indicate scam behavior, while medium-risk keywords indicate suspicious intent.
+### Risk Analysis Logic
 
----
+High Risk Keywords: registration fee, no interview, whatsapp, pay to start
 
-### 3️⃣ Trust Score Calculation
+Medium Risk Keywords: earn, immediate, work from home, no experience
 
-Final Trust Score =
-ML Prediction Score
-
-(15 × High Risk Keywords)
-
-(5 × Medium Risk Keywords)
-
-(Maximum capped at 100%)
-
-#### Example
-- ML Score: 32%  
-- High Risk Keywords: 4 → 60%  
-- Medium Risk Keywords: 1 → 5%  
-- **Final Trust Score: 97%**
-
-This logic ensures that obvious scam jobs always appear as high risk.
-
----
 
 ## 🏢 Company Verification Logic
 The system checks for the presence of trusted company names such as:
@@ -141,21 +110,53 @@ Copy code
 
 ---
 
----
-
 ## 🧾 Database Design
 
-### Table: JobChecks
+JobSentinel uses Microsoft SQL Server to store job analysis results securely.
+Each job checked by the system is saved for verification and future reference.
 
-| Column Name | Description |
-|------------|-------------|
-| job_text | Job description |
-| trust_score | Final trust score (%) |
-| result | Verdict |
+### Database Schema (JobScamDB)
+
+| Column Name   | Data Type  | Description                                           |
+|---------------|-----------|-------------------------------------------------------|
+| job_text      | NVARCHAR  | Original job description submitted by the user       |
+| trust_score   | INT       | ML + keyword-based trust score (0–100)              |
+| result        | NVARCHAR  | Final verdict (Genuine / Suspicious / Likely Scam)  |
+| created_at    | DATETIME  | Timestamp when the job was analyzed (default: now)  |
+
+### Purpose of Database
+
+Each row = one job analysis request
+
+Data stored automatically in SQL Server
+
+Helps in audit, reporting, and future ML improvements
 
 ---
 
-## Why This Project Is Unique
+## How To Run
+
+Download or clone the project repository from GitHub.
+
+Ensure that Python is installed on your system.
+
+Open the project folder in Command Prompt, PowerShell, or Terminal.
+
+Install all required dependencies mentioned in the requirements.txt file.
+
+Run the application using the main Python file.
+
+Once the server starts, open any web browser.
+
+Enter the local server address shown in the terminal (http://127.0.0.1:5000
+).
+
+The JobSentinel web interface will open and is ready to use.
+
+---
+
+## Why This Project Is Useful
+
 Hybrid ML + rule-based detection approach
 
 Visual trust score representation
@@ -167,13 +168,25 @@ Explainable and transparent results
 Easily extendable for major project
 
 ---
+## Limitations
+
+Model accuracy depends on training data quality
+
+New scam patterns may require retraining
+
+Company verification is keyword-based
 
 ##  Future Enhancements
-Detailed reasoning engine
+
+Detailed reasoning engine & Advanced deep learning models
 
 Job history dashboard
 
 Export analysis reports
+
+URL and domain credibility checking
+
+Real-time web scraping
 
 Cloud database integration
 
@@ -187,8 +200,8 @@ Its hybrid detection approach makes it accurate, explainable, and suitable for a
 
 👩‍💻 Developed By
 
- Himanshi Tripathi
+Himanshi Tripathi
+(BCA Student)
 
-  (BCA Student)
 
 
