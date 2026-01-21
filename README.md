@@ -141,23 +141,6 @@ Copy code
 
 ---
 
-## 🗂️ Project Structure
-
-JobSentinel/
-│
-├── app.py
-├── requirements.txt
-├── model/
-│ ├── job_scam_model.pkl
-│ └── tfidf_vectorizer.pkl
-├── templates/
-│ ├── index.html
-│ └── result.html
-├── static/
-│ └── style.css
-└── README.md
-
-
 ---
 
 ## 🧾 Database Design
@@ -207,4 +190,5 @@ Its hybrid detection approach makes it accurate, explainable, and suitable for a
  Himanshi Tripathi
 
   (BCA Student)
+
 
